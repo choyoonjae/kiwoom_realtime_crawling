@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5 import uic
-from testing import *  # kiwoom.py에 해당
+from real_time_crawler import *  # real_time_crawler.py에서 정의한 클래스를 활용하여 실제 수집을 실행하기 위함
 import time
 import pandas as pd
 import numpy as np
@@ -15,7 +15,7 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.kiwoomconnect()
-        self.kiwoom.res_set_real("1001")  #####실시간 연결 시작
+        self.kiwoom.res_set_real("1001")        # starting realtime connection
         print("connection complete")
 
     def kiwoomconnect(self):
@@ -23,7 +23,10 @@ class MyWindow(QMainWindow):
         self.kiwoom._comm_connect()
         self.kiwoom.OnReceiveRealData.connect(self.real_check)
 
-    # 이벤트 처리하는곳
+    # processing the event
+    # if self.kiwoom._get_comm_real_data(sRealKey, 43) != '': ==> collect the defined data when event is generated
+    # sRealKey = jongmok code
+    
     def real_check(self, sRealKey, sRealType, sRealData):
         if self.kiwoom._get_comm_real_data(sRealKey, 43) != '':
             b = sRealKey, self.kiwoom._get_comm_real_data(sRealKey, 21), self.kiwoom._get_comm_real_data(sRealKey, 13), \
@@ -42,9 +45,12 @@ class MyWindow(QMainWindow):
                 self.kiwoom._get_comm_real_data(sRealKey, 59), self.kiwoom._get_comm_real_data(sRealKey, 79), self.kiwoom._get_comm_real_data(sRealKey, 60), \
                 self.kiwoom._get_comm_real_data(sRealKey, 80)
 
+            # to flattening the data such as (jongmok code, time, bid 10 price, bid 10 volume, bid 9 price, bid 9 volume,..., ask 10 price, ask 10 volume)
             np.set_printoptions(linewidth=np.inf)
             b = np.array(b)
-
+            
+            # to save the realtime data by file name (jongmok code)
+            
             if b[:1] == ('091990'):
                 basket1 = np.array2string(b)
                 np.set_printoptions(linewidth=np.inf)  # 데이터 한줄로 만들기
@@ -955,6 +961,7 @@ class MyWindow(QMainWindow):
                 f1.write(ttest + '\n')
                 f1.close()
 
+# execute !
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     myWindow = MyWindow()
