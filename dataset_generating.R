@@ -1,3 +1,4 @@
+# set directory to your own path
 list <- list.files('C:/Users/CHO/Desktop/주식_틱_데이터/10_10_data')
 jongmok <- unique(substr(list,1,6))
 
@@ -15,6 +16,7 @@ for(k in 1:49){
   DOWN_test <- data.frame()
   
   for(i in 1:as.integer(0.7*length(scope))){
+    # set directory to your own path
     a <- read.csv(paste('C:/Users/CHO/Desktop/주식_틱_데이터/10_10_data/',target[i],sep = ''))
     basket_up <- a[1:(0.5*nrow(a)),]
     basket_down <- a[((0.5*nrow(a))+1):nrow(a),]
@@ -23,6 +25,7 @@ for(k in 1:49){
     
   }
   for(i in (as.integer(0.7*length(scope))+1):length(scope)){
+    # set directory to your own path
     a <- read.csv(paste('C:/Users/CHO/Desktop/주식_틱_데이터/10_10_data/',target[i],sep = ''))
     basket_up <- a[1:(0.5*nrow(a)),]
     basket_down <- a[((0.5*nrow(a))+1):nrow(a),]
@@ -34,8 +37,9 @@ for(k in 1:49){
   
   test <- rbind(UP_test,DOWN_test)
   
-  
+  # set directory to your own path
   write.csv(train,paste('C:/Users/CHO/Desktop/주식_틱_데이터/10_10_dataset/',jongmok[k],'_train.csv',sep = ''),row.names = F)
+  # set directory to your own path
   write.csv(test,paste('C:/Users/CHO/Desktop/주식_틱_데이터/10_10_dataset/',jongmok[k],'_test.csv',sep = ''),row.names = F)
   
   
