@@ -16,6 +16,8 @@ top50 <- c('091990','215600','035760','084990','003670','086900','028300',
            '122870','183490','140410','058470','086520','036420','092040',
            '083790','069080','200230','030190','073070','007390','267980')
 
+
+# set directory to your own path
 list <- list.files(path='C:/Users/CHO/Desktop/stockdata/golden')  
 
 final_list <- vector()  
@@ -40,7 +42,7 @@ for(k in 338:length(final_index)){
   a <- read.table(name, stringsAsFactors = T)
   a$V44 <- NULL 
   
-  #변수명 재설정
+  # define the column name
   colnames(a) <- c("jongmok",'time','accum_vol','md10','md10_vol','md9','md9_vol','md8','md8_vol',
                    'md7','md7_vol','md6','md6_vol','md5','md5_vol','md4','md4_vol','md3','md3_vol',
                    'md2','md2_vol','md1','md1_vol','ms1','ms1_vol','ms2','ms2_vol','ms3','ms3_vol',
@@ -49,18 +51,18 @@ for(k in 338:length(final_index)){
   
   
   {
-    jongmok <- gsub("\\[|\\]", "", as.character(a$jongmok[1])) #종목코드 전처리
-    jongmok <- gsub("'", "", jongmok) #종목코드 전처리
-    a <- a[-1] #종목코드 전처리
+    jongmok <- gsub("\\[|\\]", "", as.character(a$jongmok[1]))
+    jongmok <- gsub("'", "", jongmok)
+    a <- a[-1]
     
     b <- data.frame()
-    b <- lapply(a, abs) #시작가 기준 수익률로 인해 발생하는 -부호 제거
+    b <- lapply(a, abs) #시작가 기준 수익률로 인해 발생하는 - 부호 제거
     b <- as.data.frame(b)
     
     b <- subset(b, time >91000) #장 시작 전 동시호가 제외,
     b <- subset(b, time <152000) #장마감 동시호가 제외, 증권시장 정규시간만 대상
     
-    #똑같은 sec의 데이터 중 마지막 tick만을 선택
+    # 초 단위 분석을 위해 똑같은 sec의 데이터 중 마지막 tick만을 선택
     b <- b[!duplicated(b[,'time'],fromLast = TRUE),]
     time2 <- c(b$time[1]:b$time[nrow(b)])
     time2_last <- right(time2,2)
@@ -79,7 +81,7 @@ for(k in 338:length(final_index)){
   }
   
   
-  #일정한 sec 단위 분석을 위해 NULL값인 sec에 이전 sec 데이터 입력
+  # 일정한 sec 단위 분석을 위해 NULL값인 sec에 이전 sec 데이터 입력
   for(i in 2:nrow(dataset2)){
     #print(i)
     if(is.na(dataset2[i,]$md10)==TRUE){
@@ -96,14 +98,14 @@ for(k in 338:length(final_index)){
   ttest3 <- data.frame()
   
   for(i in 1:(nrow(b)-18)){
-    #print(i)
+    
     if(b$md8[i+18]>b$md8[i+9]){
-      ttest1 <- rbind(ttest1,b[i:(i+9),])#상승
+      ttest1 <- rbind(ttest1,b[i:(i+9),]) # 상승
       
     }else if(b$md8[i+18]<b$md8[i+9]){
-      ttest2 <- rbind(ttest2,b[i:(i+9),])#하락
+      ttest2 <- rbind(ttest2,b[i:(i+9),]) # 하락
     }else{
-      #ttest3 <- rbind(ttest3,b[i:(i+9),])#보합
+      #ttest3 <- rbind(ttest3,b[i:(i+9),]) # 보합
     }
   }
   
@@ -126,6 +128,8 @@ for(k in 338:length(final_index)){
   final <- rbind(basket1,basket2)
   
   #prepr <- final/rowSums(final)
+  
+  # set directory to your own path
   write.csv(final,paste("C:/Users/CHO/Desktop/10_9_data/",jongmok,"_",ddate,"_10_9_refine.csv",sep =''),row.names = F)
 }
 
