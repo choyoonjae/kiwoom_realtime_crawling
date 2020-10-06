@@ -18,17 +18,15 @@ learning_rate = 0.001
 training_epochs = 1000
 batch_size = 256
 
-directory = 'data/'
+directory = './data/'
 
-# '091990','215600','035760','084990','003670','086900','028300',
-#                '253450','263750','025980','068760','034230','036490','078340',
-#                '145020','095700','056190','046890','041960','028150','003380',
-#                '098460','041510','042000','192080','035900','178920','022100',
-#                '036830','038540','048260','240810','102940',
-# '000250','066970',
-#                '122870','183490',
 
-jongmoklist = ['140410','058470','086520','036420','092040',
+jongmoklist = ['091990','215600','035760','084990','003670','086900','028300',
+               '253450','263750','025980','068760','034230','036490','078340',
+               '145020','095700','056190','046890','041960','028150','003380',
+               '098460','041510','042000','192080','035900','178920','022100',
+               '036830','038540','048260','240810','102940','000250','066970',
+               '122870','183490','140410','058470','086520','036420','092040',
                '083790','069080','200230','030190','073070','007390','267980']
 
 # global_step = tf.Variable(0, trainable=False, name='global_step')
@@ -40,10 +38,12 @@ Y = tf.placeholder(tf.float32, [None, output_dim],name='Y')
 
 """multi layer rnn"""
 cells = []
-cell_1 = tf.nn.rnn_cell.GRUCell(num_units=16,activation=tf.nn.softsign)
+cell_1 = tf.nn.rnn_cell.BasicRNNCell(num_units=16,activation=tf.nn.softsign)
+# cell_1 = tf.nn.rnn_cell.GRUCell(num_units=16,activation=tf.nn.softsign)
 # cell_1 = tf.nn.rnn_cell.BasicLSTMCell(num_units=16, state_is_tuple=True,name='rnn_layer_1')
 cells.append(cell_1)
-cell_2 = tf.nn.rnn_cell.GRUCell(num_units=8,activation=tf.nn.softsign)
+cell_2 = tf.nn.rnn_cell.BasicRNNCell(num_units=8,activation=tf.nn.softsign)
+# cell_2 = tf.nn.rnn_cell.GRUCell(num_units=8,activation=tf.nn.softsign)
 # cell_2 = tf.nn.rnn_cell.BasicLSTMCell(num_units=8, state_is_tuple=True,name='rnn_layer_2')
 cells.append(cell_2)
 # cell_3 = tf.nn.rnn_cell.BasicLSTMCell(num_units=4, state_is_tuple='rnn_layer_3')
@@ -101,12 +101,14 @@ for jongmok in jongmoklist:
     train_input, train_label = shuffle(train_input, train_label)  # shuffle
     test_input, test_label = shuffle(test_input, test_label)  # shuffle
 
+    print(train_input, train_label)
+
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
 
-        merged = tf.summary.merge_all()
-        writer = tf.summary.FileWriter('./logs', sess.graph)
+        # merged = tf.summary.merge_all()
+        # writer = tf.summary.FileWriter('./logs', sess.graph)
 
         # tensorboard --logdir=./logs
         # http://localhost:6006
@@ -130,7 +132,7 @@ for jongmok in jongmoklist:
 
                 # summary = sess.run(merged, feed_dict=feed_dict)
                 # writer.add_summary(summary, global_step=sess.run(global_step))
-                writer.add_graph(sess.graph)
+                # writer.add_graph(sess.graph)
 
             print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
 
@@ -154,8 +156,8 @@ for jongmok in jongmoklist:
         # print(test_label)
 
         saver = tf.train.Saver()
-        save_path = saver.save(sess, "./model/" + jongmok + "/" + jongmok + "_" + "GRU-model.ckpt") #
+        save_path = saver.save(sess, "./model/" + jongmok + "/" + jongmok + "_" + "RNN-model.ckpt") #
 
 
-        # np.savetxt(jongmok + "_accuracy.csv", train_accuracy, delimiter=",")
-        # np.savetxt("prediction.csv", test_accuracy, delimiter=",")
+        np.savetxt(jongmok + "_accuracy.csv", train_accuracy, delimiter=",")
+        np.savetxt("prediction.csv", test_accuracy, delimiter=",")
