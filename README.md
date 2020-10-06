@@ -29,6 +29,10 @@ using R{
 
 }
 
-using tensorflow{
+using tensorflow in Python{
 
-4. 
+5. RNN_LSTM_GRU_model.py
+
+전처리까지 완료된 분석용 데이터셋을 대상으로 순환신경망 (RNN / LSTM / GRU)을 활용하여 시계열 학습 및 가격 등락 예측
+
+}
